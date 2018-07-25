@@ -23,11 +23,13 @@ func resourceFeatureFlag() *schema.Resource {
 
 			"description": &schema.Schema{
 				Type:     schema.TypeList,
+				Elem:     schema.TypeString,
 				Optional: true,
 			},
 
 			"tags": &schema.Schema{
 				Type:     schema.TypeList,
+				Elem:     schema.TypeString,
 				Optional: true,
 			},
 		},
