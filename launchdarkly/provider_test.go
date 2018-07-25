@@ -31,8 +31,8 @@ func TestProvider_impl(t *testing.T) {
 }
 
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("LAUNCHDARKLY_SDK_KEY"); v == "" {
-		t.Fatal("LAUNCHDARKLY_SDK_KEY must be set for acceptance tests")
+	if v := os.Getenv("LAUNCHDARKLY_TOKEN"); v == "" {
+		t.Fatal("LAUNCHDARKLY_TOKEN must be set for acceptance tests")
 	}
 }
 

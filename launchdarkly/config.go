@@ -1,7 +1,7 @@
 package launchdarkly
 
 type Config struct {
-	SDKKey string
+	Token string
 }
 
 type Client struct {

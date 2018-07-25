@@ -9,11 +9,11 @@ import (
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"sdk_key": &schema.Schema{
+			"token": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("LAUNCHDARKLY_SDK_KEY", nil),
-				Description: "The LaunchDarkly SDK key",
+				DefaultFunc: schema.EnvDefaultFunc("LAUNCHDARKLY_TOKEN", nil),
+				Description: "The LaunchDarkly access token",
 			},
 		},
 
@@ -27,7 +27,7 @@ func Provider() terraform.ResourceProvider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		SDKKey: d.Get("sdk_key").(string),
+		Token: d.Get("token").(string),
 	}
 	return config.Client()
 }
