@@ -7,4 +7,6 @@ jobs:
     working_directory: /go/src/github.com/mlafeldt/terraform-provider-launchdarkly
     steps:
       - checkout
+      - run: make install-deps
       - run: make all
+      - run: terraform-provider-launchdarkly || true
