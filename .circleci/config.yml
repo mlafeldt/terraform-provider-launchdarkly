@@ -1,0 +1,10 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.10
+    working_directory: /go/src/github.com/mlafeldt/terraform-provider-launchdarkly
+    steps:
+      - checkout
+      - run: make all
