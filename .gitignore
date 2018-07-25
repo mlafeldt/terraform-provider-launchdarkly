@@ -1,0 +1,5 @@
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+/example.tf
+/terraform-provider-launchdarkly

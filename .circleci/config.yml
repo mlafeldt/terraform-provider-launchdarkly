@@ -9,4 +9,4 @@ jobs:
       - checkout
       - run: make install-deps
       - run: make all
-      - run: terraform-provider-launchdarkly || true
+      - run: ./terraform-provider-launchdarkly || true
