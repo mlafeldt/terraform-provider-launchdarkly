@@ -1,6 +1,9 @@
 package launchdarkly
 
-import "github.com/hashicorp/terraform/helper/schema"
+import (
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mlafeldt/go-launchdarkly/client/feature_flags"
+)
 
 func resourceFeatureFlag() *schema.Resource {
 	return &schema.Resource{
@@ -10,25 +13,39 @@ func resourceFeatureFlag() *schema.Resource {
 		Delete: resourceFeatureFlagDelete,
 
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
 			"key": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"description": &schema.Schema{
+			"name": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"project": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Default:  "default",
 			},
 		},
 	}
 }
 
 func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) error {
-	return nil
+	meta := metaRaw.(*Meta)
+
+	params := feature_flags.NewPostFeatureFlagParams()
+	params.SetProjectKey(d.Get("project").(string))
+
+	key := d.Get("key").(string)
+	name := d.Get("name").(string)
+	params.SetFeatureFlagBody(feature_flags.PostFeatureFlagBody{
+		Key:  &key,
+		Name: &name,
+	})
+
+	_, err := meta.LaunchDarkly.FeatureFlags.PostFeatureFlag(params, meta.AuthInfo)
+	return err
 }
 
 func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error {
