@@ -22,6 +22,11 @@ func resourceFeatureFlag() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"permanent": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"project": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -40,8 +45,9 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
 	params.SetFeatureFlagBody(feature_flags.PostFeatureFlagBody{
-		Key:  &key,
-		Name: &name,
+		Key:       &key,
+		Name:      &name,
+		Temporary: !d.Get("permanent").(bool),
 	})
 
 	_, err := meta.LaunchDarkly.FeatureFlags.PostFeatureFlag(params, meta.AuthInfo)
