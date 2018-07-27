@@ -18,7 +18,3 @@ testacc:
 
 build:
 	go build -o terraform-provider-launchdarkly
-
-example: build
-	terraform init
-	terraform apply
