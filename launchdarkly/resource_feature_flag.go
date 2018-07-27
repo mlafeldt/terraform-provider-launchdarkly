@@ -1,6 +1,8 @@
 package launchdarkly
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mlafeldt/go-launchdarkly/client/feature_flags"
 )
@@ -38,30 +40,63 @@ func resourceFeatureFlag() *schema.Resource {
 
 func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
-
-	params := feature_flags.NewPostFeatureFlagParams()
-	params.SetProjectKey(d.Get("project").(string))
-
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
-	params.SetFeatureFlagBody(feature_flags.PostFeatureFlagBody{
-		Key:       &key,
-		Name:      &name,
-		Temporary: !d.Get("permanent").(bool),
-	})
+	project := d.Get("project").(string)
+
+	params := feature_flags.NewPostFeatureFlagParams().
+		WithProjectKey(project).
+		WithFeatureFlagBody(feature_flags.PostFeatureFlagBody{
+			Key:       &key,
+			Name:      &name,
+			Temporary: !d.Get("permanent").(bool),
+		})
 
 	_, err := meta.LaunchDarkly.FeatureFlags.PostFeatureFlag(params, meta.AuthInfo)
-	return err
+	if err != nil {
+		return fmt.Errorf("Failed to create flag %q in project %q: %s", key, project, err)
+	}
+
+	d.SetId(key)
+	return nil
 }
 
 func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error {
+	meta := metaRaw.(*Meta)
+	key := d.Get("key").(string)
+	project := d.Get("project").(string)
+
+	params := feature_flags.NewGetFeatureFlagParams().
+		WithFeatureFlagKey(key).
+		WithProjectKey(project)
+
+	flag, err := meta.LaunchDarkly.FeatureFlags.GetFeatureFlag(params, meta.AuthInfo)
+	if err != nil {
+		return fmt.Errorf("Failed to get flag %q in project %q: %s", key, project, err)
+	}
+
+	d.SetId(flag.Payload.Key)
 	return nil
 }
 
 func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) error {
+	// TODO
 	return nil
 }
 
 func resourceFeatureFlagDelete(d *schema.ResourceData, metaRaw interface{}) error {
+	meta := metaRaw.(*Meta)
+	key := d.Get("key").(string)
+	project := d.Get("project").(string)
+
+	params := feature_flags.NewDeleteFeatureFlagParams().
+		WithFeatureFlagKey(key).
+		WithProjectKey(project)
+
+	_, err := meta.LaunchDarkly.FeatureFlags.DeleteFeatureFlag(params, meta.AuthInfo)
+	if err != nil {
+		return fmt.Errorf("Failed to delete flag %q from project %q: %s", key, project, err)
+	}
+
 	return nil
 }
