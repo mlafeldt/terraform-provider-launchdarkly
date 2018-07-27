@@ -31,6 +31,11 @@ func resourceFeatureFlag() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"tags": &schema.Schema{
+				Type:     schema.TypeList,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+				Optional: true,
+			},
 			"permanent": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -49,6 +54,7 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 	meta := metaRaw.(*Meta)
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
+	tags := stringList(d.Get("tags").([]interface{}))
 	project := d.Get("project").(string)
 
 	params := feature_flags.NewPostFeatureFlagParams().
@@ -56,6 +62,7 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 		WithFeatureFlagBody(feature_flags.PostFeatureFlagBody{
 			Key:       &key,
 			Name:      &name,
+			Tags:      tags,
 			Temporary: !d.Get("permanent").(bool),
 		})
 
@@ -84,6 +91,7 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 
 	d.Set("key", flag.Payload.Key)
 	d.Set("name", flag.Payload.Name)
+	d.Set("tags", flag.Payload.Tags)
 	d.Set("permanent", !flag.Payload.Temporary)
 	return nil
 }
@@ -92,6 +100,7 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 	meta := metaRaw.(*Meta)
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
+	tags := stringList(d.Get("tags").([]interface{}))
 	project := d.Get("project").(string)
 
 	patch := feature_flags.PatchFeatureFlagBody{
@@ -101,6 +110,11 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/name"),
 				Value: name,
+			},
+			{
+				Op:    stringPtr("replace"),
+				Path:  stringPtr("/tags"),
+				Value: tags,
 			},
 			{
 				Op:    stringPtr("replace"),
@@ -163,5 +177,3 @@ func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*sch
 	}
 	return []*schema.ResourceData{d}, nil
 }
-
-func stringPtr(v string) *string { return &v }
