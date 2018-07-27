@@ -2,11 +2,14 @@ package launchdarkly
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mlafeldt/go-launchdarkly/client/feature_flags"
 	"github.com/mlafeldt/go-launchdarkly/models"
 )
+
+const defaultProject = "default"
 
 func resourceFeatureFlag() *schema.Resource {
 	return &schema.Resource{
@@ -14,6 +17,9 @@ func resourceFeatureFlag() *schema.Resource {
 		Read:   resourceFeatureFlagRead,
 		Update: resourceFeatureFlagUpdate,
 		Delete: resourceFeatureFlagDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceFeatureFlagImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"key": &schema.Schema{
@@ -33,7 +39,7 @@ func resourceFeatureFlag() *schema.Resource {
 			"project": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "default",
+				Default:  defaultProject,
 			},
 		},
 	}
@@ -73,7 +79,7 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 
 	flag, err := meta.LaunchDarkly.FeatureFlags.GetFeatureFlag(params, meta.AuthInfo)
 	if err != nil {
-		return fmt.Errorf("Failed to get flag %q in project %q: %s", key, project, err)
+		return fmt.Errorf("Failed to get flag %q of project %q: %s", key, project, err)
 	}
 
 	d.Set("key", flag.Payload.Key)
@@ -132,6 +138,30 @@ func resourceFeatureFlagDelete(d *schema.ResourceData, metaRaw interface{}) erro
 	}
 
 	return nil
+}
+
+func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	project := defaultProject
+	key := d.Id()
+
+	if strings.Contains(d.Id(), "/") {
+		parts := strings.SplitN(d.Id(), "/", 2)
+
+		if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+			return nil, fmt.Errorf("ID must have format <project>/<key>")
+		}
+
+		project, key = parts[0], parts[1]
+	}
+
+	d.Set("project", project)
+	d.Set("key", key)
+	d.SetId(key)
+
+	if err := resourceFeatureFlagRead(d, meta); err != nil {
+		return nil, err
+	}
+	return []*schema.ResourceData{d}, nil
 }
 
 func stringPtr(v string) *string { return &v }
