@@ -17,6 +17,8 @@ func resourceFeatureFlag() *schema.Resource {
 		Read:   resourceFeatureFlagRead,
 		Update: resourceFeatureFlagUpdate,
 		Delete: resourceFeatureFlagDelete,
+		Exists: resourceFeatureFlagExists,
+
 		Importer: &schema.ResourceImporter{
 			State: resourceFeatureFlagImport,
 		},
@@ -152,6 +154,25 @@ func resourceFeatureFlagDelete(d *schema.ResourceData, metaRaw interface{}) erro
 	}
 
 	return nil
+}
+
+func resourceFeatureFlagExists(d *schema.ResourceData, metaRaw interface{}) (bool, error) {
+	meta := metaRaw.(*Meta)
+	project := d.Get("project").(string)
+	key := d.Get("key").(string)
+
+	params := feature_flags.NewGetFeatureFlagParams().
+		WithProjectKey(project).
+		WithFeatureFlagKey(key)
+
+	_, err := meta.LaunchDarkly.FeatureFlags.GetFeatureFlag(params, meta.AuthInfo)
+	if err == nil {
+		return true, nil
+	}
+	if _, notFound := err.(*feature_flags.GetFeatureFlagNotFound); notFound {
+		return false, nil
+	}
+	return false, fmt.Errorf("Failed to check flag %q of project %q: %s", key, project, err)
 }
 
 func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
