@@ -38,6 +38,10 @@ func resourceFeatureFlag() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"description": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 			"tags": &schema.Schema{
 				Type:     schema.TypeList,
 				Elem:     &schema.Schema{Type: schema.TypeString},
@@ -69,6 +73,7 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 		WithFeatureFlagBody(feature_flags.PostFeatureFlagBody{
 			Key:              &key,
 			Name:             &name,
+			Description:      d.Get("description").(string),
 			Tags:             tags,
 			IncludeInSnippet: d.Get("include_in_snippet").(bool),
 			Temporary:        d.Get("temporary").(bool),
@@ -99,6 +104,7 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 
 	d.Set("key", flag.Payload.Key)
 	d.Set("name", flag.Payload.Name)
+	d.Set("description", flag.Payload.Description)
 	d.Set("tags", flag.Payload.Tags)
 	d.Set("include_in_snippet", flag.Payload.IncludeInSnippet)
 	d.Set("temporary", flag.Payload.Temporary)
@@ -119,6 +125,11 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/name"),
 				Value: name,
+			},
+			{
+				Op:    stringPtr("replace"),
+				Path:  stringPtr("/description"),
+				Value: d.Get("description").(string),
 			},
 			{
 				Op:    stringPtr("replace"),
