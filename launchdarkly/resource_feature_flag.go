@@ -43,6 +43,11 @@ func resourceFeatureFlag() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
+			"include_in_snippet": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"temporary": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -62,10 +67,11 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 	params := feature_flags.NewPostFeatureFlagParams().
 		WithProjectKey(project).
 		WithFeatureFlagBody(feature_flags.PostFeatureFlagBody{
-			Key:       &key,
-			Name:      &name,
-			Tags:      tags,
-			Temporary: d.Get("temporary").(bool),
+			Key:              &key,
+			Name:             &name,
+			Tags:             tags,
+			IncludeInSnippet: d.Get("include_in_snippet").(bool),
+			Temporary:        d.Get("temporary").(bool),
 		})
 
 	_, err := meta.LaunchDarkly.FeatureFlags.PostFeatureFlag(params, meta.AuthInfo)
@@ -94,6 +100,7 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 	d.Set("key", flag.Payload.Key)
 	d.Set("name", flag.Payload.Name)
 	d.Set("tags", flag.Payload.Tags)
+	d.Set("include_in_snippet", flag.Payload.IncludeInSnippet)
 	d.Set("temporary", flag.Payload.Temporary)
 	return nil
 }
@@ -117,6 +124,11 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/tags"),
 				Value: tags,
+			},
+			{
+				Op:    stringPtr("replace"),
+				Path:  stringPtr("/includeInSnippet"),
+				Value: d.Get("include_in_snippet").(bool),
 			},
 			{
 				Op:    stringPtr("replace"),
