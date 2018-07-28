@@ -43,7 +43,7 @@ func resourceFeatureFlag() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 			},
-			"permanent": {
+			"temporary": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
@@ -65,7 +65,7 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 			Key:       &key,
 			Name:      &name,
 			Tags:      tags,
-			Temporary: !d.Get("permanent").(bool),
+			Temporary: d.Get("temporary").(bool),
 		})
 
 	_, err := meta.LaunchDarkly.FeatureFlags.PostFeatureFlag(params, meta.AuthInfo)
@@ -94,7 +94,7 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 	d.Set("key", flag.Payload.Key)
 	d.Set("name", flag.Payload.Name)
 	d.Set("tags", flag.Payload.Tags)
-	d.Set("permanent", !flag.Payload.Temporary)
+	d.Set("temporary", flag.Payload.Temporary)
 	return nil
 }
 
@@ -121,7 +121,7 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 			{
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/temporary"),
-				Value: !d.Get("permanent").(bool),
+				Value: d.Get("temporary").(bool),
 			},
 		},
 	}
