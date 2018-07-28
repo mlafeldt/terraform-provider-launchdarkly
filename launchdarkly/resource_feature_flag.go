@@ -22,6 +22,11 @@ func resourceFeatureFlag() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"project": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  defaultProject,
+			},
 			"key": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -41,21 +46,16 @@ func resourceFeatureFlag() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
-			"project": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  defaultProject,
-			},
 		},
 	}
 }
 
 func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
+	project := d.Get("project").(string)
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
 	tags := stringList(d.Get("tags").([]interface{}))
-	project := d.Get("project").(string)
 
 	params := feature_flags.NewPostFeatureFlagParams().
 		WithProjectKey(project).
@@ -77,12 +77,12 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 
 func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
-	key := d.Get("key").(string)
 	project := d.Get("project").(string)
+	key := d.Get("key").(string)
 
 	params := feature_flags.NewGetFeatureFlagParams().
-		WithFeatureFlagKey(key).
-		WithProjectKey(project)
+		WithProjectKey(project).
+		WithFeatureFlagKey(key)
 
 	flag, err := meta.LaunchDarkly.FeatureFlags.GetFeatureFlag(params, meta.AuthInfo)
 	if err != nil {
@@ -98,10 +98,10 @@ func resourceFeatureFlagRead(d *schema.ResourceData, metaRaw interface{}) error 
 
 func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
+	project := d.Get("project").(string)
 	key := d.Get("key").(string)
 	name := d.Get("name").(string)
 	tags := stringList(d.Get("tags").([]interface{}))
-	project := d.Get("project").(string)
 
 	patch := feature_flags.PatchFeatureFlagBody{
 		Comment: "Terraform",
@@ -125,8 +125,8 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 	}
 
 	params := feature_flags.NewPatchFeatureFlagParams().
-		WithFeatureFlagKey(key).
 		WithProjectKey(project).
+		WithFeatureFlagKey(key).
 		WithPatchComment(patch)
 
 	_, err := meta.LaunchDarkly.FeatureFlags.PatchFeatureFlag(params, meta.AuthInfo)
@@ -139,12 +139,12 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 
 func resourceFeatureFlagDelete(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
-	key := d.Get("key").(string)
 	project := d.Get("project").(string)
+	key := d.Get("key").(string)
 
 	params := feature_flags.NewDeleteFeatureFlagParams().
-		WithFeatureFlagKey(key).
-		WithProjectKey(project)
+		WithProjectKey(project).
+		WithFeatureFlagKey(key)
 
 	_, err := meta.LaunchDarkly.FeatureFlags.DeleteFeatureFlag(params, meta.AuthInfo)
 	if err != nil {
