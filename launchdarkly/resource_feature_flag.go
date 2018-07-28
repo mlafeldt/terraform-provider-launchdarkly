@@ -162,7 +162,7 @@ func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*sch
 		parts := strings.SplitN(d.Id(), "/", 2)
 
 		if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
-			return nil, fmt.Errorf("ID must have format <project>/<key>")
+			return nil, fmt.Errorf("ID must have format <key> or <project>/<key>")
 		}
 
 		project, key = parts[0], parts[1]
@@ -175,5 +175,6 @@ func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*sch
 	if err := resourceFeatureFlagRead(d, meta); err != nil {
 		return nil, err
 	}
+
 	return []*schema.ResourceData{d}, nil
 }
