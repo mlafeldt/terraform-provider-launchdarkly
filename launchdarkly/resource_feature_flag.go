@@ -26,6 +26,7 @@ func resourceFeatureFlag() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  defaultProject,
+				ForceNew: true,
 			},
 			"key": &schema.Schema{
 				Type:     schema.TypeString,
