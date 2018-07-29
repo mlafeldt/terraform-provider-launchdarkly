@@ -193,7 +193,7 @@ func resourceFeatureFlagExists(d *schema.ResourceData, metaRaw interface{}) (boo
 	if _, notFound := err.(*feature_flags.GetFeatureFlagNotFound); notFound {
 		return false, nil
 	}
-	return false, fmt.Errorf("Failed to check flag %q of project %q: %s", key, project, err)
+	return false, fmt.Errorf("Failed to check if flag %q exists in project %q: %s", key, project, err)
 }
 
 func resourceFeatureFlagImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
