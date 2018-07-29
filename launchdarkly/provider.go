@@ -19,6 +19,7 @@ func Provider() terraform.ResourceProvider {
 
 		ResourcesMap: map[string]*schema.Resource{
 			"launchdarkly_feature_flag": resourceFeatureFlag(),
+			"launchdarkly_project":      resourceProject(),
 		},
 
 		ConfigureFunc: providerConfigure,

@@ -9,8 +9,6 @@ import (
 	"github.com/mlafeldt/go-launchdarkly/models"
 )
 
-const defaultProject = "default"
-
 func resourceFeatureFlag() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFeatureFlagCreate,
