@@ -110,9 +110,10 @@ func resourceProjectDelete(d *schema.ResourceData, metaRaw interface{}) error {
 }
 
 func resourceProjectExists(d *schema.ResourceData, metaRaw interface{}) (bool, error) {
-	meta := metaRaw.(*Meta)
-	key := d.Get("key").(string)
+	return projectExists(d.Get("key").(string), metaRaw.(*Meta))
+}
 
+func projectExists(key string, meta *Meta) (bool, error) {
 	params := projects.NewGetProjectParams().WithProjectKey(key)
 
 	_, err := meta.LaunchDarkly.Projects.GetProject(params, meta.AuthInfo)
@@ -122,6 +123,7 @@ func resourceProjectExists(d *schema.ResourceData, metaRaw interface{}) (bool, e
 	if _, notFound := err.(*projects.GetProjectNotFound); notFound {
 		return false, nil
 	}
+
 	return false, fmt.Errorf("Failed to check if project with key %q exists: %s", key, err)
 }
 

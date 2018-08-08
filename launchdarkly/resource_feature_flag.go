@@ -63,6 +63,14 @@ func resourceFeatureFlag() *schema.Resource {
 func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
 	project := d.Get("project").(string)
+
+	if exists, err := projectExists(project, meta); !exists {
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("Cannot find project with key %q", project)
+	}
+
 	key := d.Get("key").(string)
 
 	params := feature_flags.NewPostFeatureFlagParams().
