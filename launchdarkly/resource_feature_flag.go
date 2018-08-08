@@ -64,16 +64,14 @@ func resourceFeatureFlagCreate(d *schema.ResourceData, metaRaw interface{}) erro
 	meta := metaRaw.(*Meta)
 	project := d.Get("project").(string)
 	key := d.Get("key").(string)
-	name := d.Get("name").(string)
-	tags := stringList(d.Get("tags").([]interface{}))
 
 	params := feature_flags.NewPostFeatureFlagParams().
 		WithProjectKey(project).
 		WithFeatureFlagBody(feature_flags.PostFeatureFlagBody{
 			Key:              &key,
-			Name:             &name,
+			Name:             stringPtr(d.Get("name").(string)),
 			Description:      d.Get("description").(string),
-			Tags:             tags,
+			Tags:             stringList(d.Get("tags").([]interface{})),
 			IncludeInSnippet: d.Get("include_in_snippet").(bool),
 			Temporary:        d.Get("temporary").(bool),
 		})
@@ -114,8 +112,6 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 	meta := metaRaw.(*Meta)
 	project := d.Get("project").(string)
 	key := d.Get("key").(string)
-	name := d.Get("name").(string)
-	tags := stringList(d.Get("tags").([]interface{}))
 
 	patch := feature_flags.PatchFeatureFlagBody{
 		Comment: "Terraform",
@@ -123,7 +119,7 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 			{
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/name"),
-				Value: name,
+				Value: d.Get("name").(string),
 			},
 			{
 				Op:    stringPtr("replace"),
@@ -133,7 +129,7 @@ func resourceFeatureFlagUpdate(d *schema.ResourceData, metaRaw interface{}) erro
 			{
 				Op:    stringPtr("replace"),
 				Path:  stringPtr("/tags"),
-				Value: tags,
+				Value: stringList(d.Get("tags").([]interface{})),
 			},
 			{
 				Op:    stringPtr("replace"),

@@ -39,12 +39,11 @@ func resourceProject() *schema.Resource {
 func resourceProjectCreate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
 	key := d.Get("key").(string)
-	name := d.Get("name").(string)
 
 	params := projects.NewPostProjectParams().
 		WithProjectBody(projects.PostProjectBody{
 			Key:  &key,
-			Name: &name,
+			Name: stringPtr(d.Get("name").(string)),
 		})
 
 	_, err := meta.LaunchDarkly.Projects.PostProject(params, meta.AuthInfo)
@@ -75,13 +74,12 @@ func resourceProjectRead(d *schema.ResourceData, metaRaw interface{}) error {
 func resourceProjectUpdate(d *schema.ResourceData, metaRaw interface{}) error {
 	meta := metaRaw.(*Meta)
 	key := d.Get("key").(string)
-	name := d.Get("name").(string)
 
 	patch := []*models.PatchOperation{
 		{
 			Op:    stringPtr("replace"),
 			Path:  stringPtr("/name"),
-			Value: name,
+			Value: d.Get("name").(string),
 		},
 	}
 
