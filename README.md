@@ -65,3 +65,9 @@ In order to run the full suite of acceptance tests, run `make testacc`.
 ```console
 $ make testacc
 ```
+
+## Known Issues
+
+- Creating a new project via the LaunchDarkly API will, unfortunately, also create two environments by default (Production and Test). It's not possible to delete both since at least one must exist. The `launchdarkly_project` and `launchdarkly_environment` resources don't handle this case in a good way yet. As a workaround, it's possible to import these special environments via `terraform import`.
+- Even if we could solve the previous issue, there would still be the problem that there must be at least one project, making it impossible to have a clean slate using Terraform.
+- `launchdarkly_feature_flag` doesn't support custom variations yet (bool only).
