@@ -2,5 +2,6 @@
 
 ## Supported Resources
 
-- `launchdarkly_feature_flag`
 - `launchdarkly_project`
+- `launchdarkly_environment`
+- `launchdarkly_feature_flag`
