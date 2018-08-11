@@ -1,5 +1,7 @@
 # Terraform Provider for LaunchDarkly
 
+[![CircleCI](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly.svg?style=svg)](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly)
+
 ## Supported Resources
 
 - `launchdarkly_project`
