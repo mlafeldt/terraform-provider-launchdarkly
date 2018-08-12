@@ -48,22 +48,21 @@ If you wish to work on the provider, you'll first need [Go](http://www.golang.or
 To compile the provider, run `make build`. This will build the provider and put the provider binary in the current directory.
 
 ```console
-$ make build
+make build
 ...
-$ ./terraform-provider-launchdarkly
+./terraform-provider-launchdarkly
 ...
 ```
 
-In order to test the provider, you can simply run `make test`.
+In order to test the binary with Terraform, create a .tf file in the current directory and run `make apply` or `make destroy`.
 
 ```console
-$ make test
-```
-
-In order to run the full suite of acceptance tests, run `make testacc`.
-
-```console
-$ make testacc
+vim example.tf
+...
+make apply
+...
+make destroy
+...
 ```
 
 ## Known Issues

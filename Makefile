@@ -18,3 +18,11 @@ testacc:
 
 build:
 	go build -o terraform-provider-launchdarkly
+
+apply: build
+	terraform init
+	terraform $@
+
+destroy: build
+	terraform init
+	terraform $@
