@@ -1,6 +1,4 @@
-# Terraform Provider for LaunchDarkly
-
-[![CircleCI](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly.svg?style=svg)](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly)
+# Terraform Provider for LaunchDarkly [![CircleCI](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly.svg?style=svg)](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly)
 
 ## Using the Provider
 
@@ -50,8 +48,10 @@ You'll first need [Go](http://www.golang.org) installed on your machine (version
 To build and install the provider from source, do the following:
 
 ```console
+mkdir -p $GOPATH/src/github.com/mlafeldt
+cd $GOPATH/src/github.com/mlafeldt
 git clone https://github.com/mlafeldt/terraform-provider-launchdarkly
-cd terraform-provider-launchdarkly/
+cd terraform-provider-launchdarkly
 make install
 ```
 
@@ -60,6 +60,7 @@ make install
 To compile the provider, run `make build`. This will build the provider and put the provider binary in the current directory.
 
 ```console
+cd $GOPATH/src/github.com/mlafeldt/terraform-provider-launchdarkly
 make build
 ...
 ./terraform-provider-launchdarkly
