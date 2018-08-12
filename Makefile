@@ -19,6 +19,10 @@ testacc:
 build:
 	go build -o terraform-provider-launchdarkly
 
+install: build
+	install -d -m 755 ~/.terraform.d/plugins
+	install terraform-provider-launchdarkly ~/.terraform.d/plugins
+
 apply: build
 	terraform init
 	terraform $@
