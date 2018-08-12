@@ -52,6 +52,7 @@ mkdir -p $GOPATH/src/github.com/mlafeldt
 cd $GOPATH/src/github.com/mlafeldt
 git clone https://github.com/mlafeldt/terraform-provider-launchdarkly
 cd terraform-provider-launchdarkly
+make install-deps
 make install
 ```
 
@@ -61,6 +62,7 @@ To compile the provider, run `make build`. This will build the provider and put 
 
 ```console
 cd $GOPATH/src/github.com/mlafeldt/terraform-provider-launchdarkly
+make install-deps
 make build
 ...
 ./terraform-provider-launchdarkly
