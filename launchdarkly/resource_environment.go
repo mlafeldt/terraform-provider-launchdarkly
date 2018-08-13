@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mlafeldt/go-launchdarkly/client/environments"
-
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mlafeldt/go-launchdarkly/client/environments"
 	"github.com/mlafeldt/go-launchdarkly/models"
 )
 
