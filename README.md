@@ -30,7 +30,7 @@ resource launchdarkly_feature_flag "example" {
 
   tags = [
     "hello",
-    "world"
+    "world",
   ]
 
   project = "${launchdarkly_project.example.key}"
