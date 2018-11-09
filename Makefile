@@ -28,5 +28,5 @@ apply: build
 	terraform $@
 
 destroy: build
-	terraform init
+	terraform destroy
 	terraform $@
