@@ -4,7 +4,7 @@ all: lint test testacc build
 
 install-deps:
 	go get -d -t -v ./...
-	go get github.com/golang/lint/golint
+	go get golang.org/x/lint/golint
 
 lint:
 	go vet ./...
