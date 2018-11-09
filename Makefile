@@ -16,7 +16,7 @@ test:
 testacc:
 	TF_ACC=1 go test $(TEST) -v $(TESTARGS)
 
-build:
+build: install-deps
 	go build -o terraform-provider-launchdarkly
 
 install: build
