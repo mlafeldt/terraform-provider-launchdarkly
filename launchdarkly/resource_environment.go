@@ -66,7 +66,7 @@ func resourceEnvironmentCreate(d *schema.ResourceData, metaRaw interface{}) erro
 
 	params := environments.NewPostEnvironmentParams().
 		WithProjectKey(project).
-		WithEnvironmentBody(environments.PostEnvironmentBody{
+		WithEnvironmentBody(&models.EnvironmentPost{
 			Key:        &key,
 			Name:       stringPtr(d.Get("name").(string)),
 			Color:      stringPtr(d.Get("color").(string)),
