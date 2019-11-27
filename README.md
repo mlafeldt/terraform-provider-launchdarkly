@@ -1,4 +1,6 @@
-# Terraform Provider for LaunchDarkly [![CircleCI](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly.svg?style=svg)](https://circleci.com/gh/mlafeldt/terraform-provider-launchdarkly)
+# Terraform Provider for LaunchDarkly
+
+**Deprecated! Please use the [official provider](https://github.com/terraform-providers/terraform-provider-launchdarkly).**
 
 ## Using the Provider
 
